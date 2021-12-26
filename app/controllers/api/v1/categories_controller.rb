@@ -7,18 +7,18 @@ class Api::V1::CategoriesController < ApplicationController
 
     def update
       @category = Category.find(params[:id])
-      respond_to do |format|
-        if @category.update(category_params)
-          format.html { redirect_to category_url(@category), notice: "category was successfully updated." }
-          format.json { render :show, status: :ok, location: @category }
-        else
-          format.html { render :edit, status: :unprocessable_entity }
-          format.json { render json: @category.errors, status: :unprocessable_entity }
-        end
+      # binding.pry
+      if @category.update(category_params)
+        # if category is updates successfully
+        render json: Category.all.map{|category| {id: category.id, name:category.name}}
+      else
+        # Show message that category some error while update
+        render json: { message: @category.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
       # Only allow a list of trusted parameters through.
+      # Whitelisting of params
       def category_params
         params.require(:category).permit(:name)
       end
